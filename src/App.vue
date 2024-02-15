@@ -11,7 +11,7 @@
                 <span>
                   {{ raids[t][selected[t]]['name'][lang] }}
                   <br>
-                  HP: {{ raids[t][selected[t]]['hp'] }}
+                  HP: {{ (raids[t][selected[t]]['hp'] * 10).toLocaleString() }}
                 </span>
               </template>
               <var-option v-for="(r, key) in raids[t]" :label="r['name'][lang]" :value="key">
@@ -39,6 +39,7 @@ import { ImagePreview } from '@varlet/ui';
 <script>
 const star = '★';
 const static_url = 'https://playorna.com/static';
+const rewrite_url = 'https://pxy.fqegg.top/static';
 const tiers = Array.from(Array(7).keys(), (x) => (x + 4).toString());
 const preview_button = '预览';
 const generate_button = '下载';
@@ -58,8 +59,8 @@ export default {
       const WIDTH = 400;
       const HEIGHT = 400;
       const titleFontSize = 16;
-      const bgColor = '#616161';
-      const fgColor = '#3E2723';
+      const bgColor = '#455A64';
+      const fgColor = '#000000';
       const fontColor = 'white';
       this.canvas = new fabric.Canvas('canvas', {
         backgroundColor: bgColor,
@@ -96,6 +97,7 @@ export default {
           fill: fgColor,
           width: WIDTH * 0.95,
           height: RECTHEIGHT - 18,
+          objectCaching: false,
           shadow: shadow,
         });
         const raidTier = new fabric.Text(`${star}${t}`, {
@@ -137,7 +139,7 @@ export default {
         });
         this.canvas.add(group);
 
-        const raidImg = await fabricImageFromURL(`${static_url}${raids[t][this.selected[t]]['icon']}`)
+        const raidImg = await fabricImageFromURL(`${rewrite_url}${raids[t][this.selected[t]]['icon']}`)
         const scale = 2;
         raidImg.filters.push(new fabric.Image.filters.Resize({
           resizeType: 'sliceHack',
