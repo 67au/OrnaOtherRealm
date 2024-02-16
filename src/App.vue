@@ -5,20 +5,24 @@
       <var-card title="Raids" class="card">
         <template #description>
           <div class="card-description">
-            <var-select :placeholder="`${star}${t}`" v-for="t in tiers" v-model="selected[t]">
+            <var-select :placeholder="`${star}${t}`" v-for="([t, v], index) in selected" v-model="selected[index][1]">
               <template #selected>
-                <var-icon class="append-icon" :size="48" :name="`${static_url}${raids[t][selected[t]]['icon']}`" />
+                <template v-if="v!=null">
+                <var-icon class="append-icon" :size="48" :name="`${static_url}${raids[v]['icon']}`" />
                 <span>
-                  {{ raids[t][selected[t]]['name'][lang] }}
+                  {{ raids[v]['name'][lang] }}
                   <br>
                   <var-icon name="heart" />
-                  {{ (raids[t][selected[t]]['hp'] * 10).toLocaleString() }}
+                  {{ (raids[v]['hp'] * 10).toLocaleString() }}
                 </span>
               </template>
-              <var-option v-for="(r, key) in raids[t]" :label="r['name'][lang]" :value="key">
-                <var-icon class="append-icon" :size="24" :name="`${static_url}${r['icon']}`" />
-                <span>{{ r['name'][lang] }}</span>
+              </template>
+              <template v-for="([id, tier]) in raidTier">
+              <var-option v-if="tier==t" :label="raids[id]['name'][lang]" :value="id">
+                <var-icon class="append-icon" :size="24" :name="`${static_url}${raids[id]['icon']}`" />
+                <span>{{ raids[id]['name'][lang] }}</span>
               </var-option>
+            </template>
             </var-select>
           </div>
         </template>
@@ -51,7 +55,7 @@ export default {
   data() {
     return {
       lang: 'zh-hans',
-      selected: Object.fromEntries(tiers.map((x) => [x, null])),
+      selected: tiers.map((x) => [x, null]),
       canvas: null,
     }
   },
@@ -83,7 +87,7 @@ export default {
         });
       }
 
-      for (const [index, t] of tiers.entries()) {
+      for (const [index, [tier, id]] of this.selected.entries()) {
         const shadow = new fabric.Shadow({
           color: "black",
           blur: 2,
@@ -101,7 +105,7 @@ export default {
           objectCaching: false,
           shadow: shadow,
         });
-        const raidTier = new fabric.Text(`${star}${t}`, {
+        const raidTier = new fabric.Text(`${star}${tier}`, {
           originX: 'left',
           originY: 'center',
           left: WIDTH * 0.15,
@@ -109,7 +113,7 @@ export default {
           fontSize: titleFontSize,
         });
 
-        if (this.selected[t] == null) {
+        if (id == null) {
           const group = new fabric.Group([rect, raidTier], {
             top: titleTop * 2 - 10 + index * RECTHEIGHT,
             objectCaching: false,
@@ -119,14 +123,14 @@ export default {
           continue;
         }
 
-        const raidName = new fabric.Text(raids[t][this.selected[t]]['name'][this.lang], {
+        const raidName = new fabric.Text(raids[id]['name'][this.lang], {
           originX: 'left',
           originY: 'center',
           left: WIDTH * 0.245,
           fill: fontColor,
           fontSize: titleFontSize,
         })
-        const raidHP = new fabric.Text((raids[t][this.selected[t]]['hp'] * 10).toLocaleString(), {
+        const raidHP = new fabric.Text((raids[id]['hp'] * 10).toLocaleString(), {
           originX: 'right',
           originY: 'center',
           left: WIDTH * 0.95,
@@ -140,7 +144,7 @@ export default {
         });
         this.canvas.add(group);
 
-        const raidImg = await fabricImageFromURL(`${rewrite_url}${raids[t][this.selected[t]]['icon']}`)
+        const raidImg = await fabricImageFromURL(`${rewrite_url}${raids[id]['icon']}`)
         const scale = 2;
         raidImg.filters.push(new fabric.Image.filters.Resize({
           resizeType: 'sliceHack',
@@ -212,6 +216,11 @@ export default {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+    }
+  },
+  computed: {
+    raidTier() {
+      return Object.entries(raids).map(([k, v]) => [k, v['tier']]);
     }
   }
 }
