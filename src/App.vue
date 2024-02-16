@@ -1,7 +1,7 @@
 <template>
   <div class="layout">
     <AppHeader title="Other Realm" />
-    <var-space justify="space-around" size="large">
+    <var-space justify="space-around">
       <var-card title="Raids" class="card">
         <template #description>
           <div class="card-description">
@@ -11,7 +11,8 @@
                 <span>
                   {{ raids[t][selected[t]]['name'][lang] }}
                   <br>
-                  HP: {{ (raids[t][selected[t]]['hp'] * 10).toLocaleString() }}
+                  <var-icon name="heart" />
+                  {{ (raids[t][selected[t]]['hp'] * 10).toLocaleString() }}
                 </span>
               </template>
               <var-option v-for="(r, key) in raids[t]" :label="r['name'][lang]" :value="key">
@@ -42,9 +43,9 @@ const static_url = 'https://playorna.com/static';
 const rewrite_url = 'https://pxy.fqegg.top/static';
 const tiers = Array.from(Array(7).keys(), (x) => (x + 4).toString());
 const preview_button = '预览';
-const generate_button = '下载';
+const generate_button = '生成';
 const realm = '重生界门';
-const sign = 'Generate from https://realm.fqegg.top'
+const sign = 'Generated from https://realm.fqegg.top'
 
 export default {
   data() {
