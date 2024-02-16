@@ -2,27 +2,44 @@
   <div class="layout">
     <AppHeader title="Other Realm" />
     <var-space justify="space-around">
-      <var-card title="Raids" class="card">
+      <var-card class="card">
+        <template #title>
+          <div class="card-title">
+            <var-space justify="space-between">
+              {{ "Raids" }}
+              <var-radio v-model="sw">
+                <template #unchecked-icon>
+                  <var-icon name="lock" size="20px"/>
+                </template>
+                <template #checked-icon>
+                  <var-icon name="lock-outline" size="20px"/>
+                </template>
+                <template #default>
+                </template>
+              </var-radio>
+            </var-space>
+          </div>
+        </template>
         <template #description>
           <div class="card-description">
-            <var-select :placeholder="`${star}${t}`" v-for="([t, v], index) in selected" v-model="selected[index][1]">
+            <var-select :placeholder="`${star}${selected[index][0]}`" v-for="([t, v], index) in selected" v-model="selected[index][1]" @change="selected[index][0]=raids[selected[index][1]]['tier']">
               <template #selected>
-                <template v-if="v!=null">
-                <var-icon class="append-icon" :size="48" :name="`${static_url}${raids[v]['icon']}`" />
-                <span>
-                  {{ raids[v]['name'][lang] }}
-                  <br>
-                  <var-icon name="heart" />
-                  {{ (raids[v]['hp'] * 10).toLocaleString() }}
-                </span>
-              </template>
+                <template v-if="v != null">
+                  <var-icon class="append-icon" :size="48" :name="`${static_url}${raids[v]['icon']}`" />
+                  <span>
+                    {{ raids[v]['name'][lang] }}
+                    <br>
+                    <var-icon name="heart" />
+                    {{ (raids[v]['hp'] * 10).toLocaleString() }}
+                  </span>
+                </template>
               </template>
               <template v-for="([id, tier]) in raidTier">
-              <var-option v-if="tier==t" :label="raids[id]['name'][lang]" :value="id">
-                <var-icon class="append-icon" :size="24" :name="`${static_url}${raids[id]['icon']}`" />
-                <span>{{ raids[id]['name'][lang] }}</span>
-              </var-option>
-            </template>
+                <var-option v-if="sw==1 || tier == t" :label="raids[id]['name'][lang]" :value="id">
+                  <var-icon class="append-icon" :size="24" :name="`${static_url}${raids[id]['icon']}`" />
+                  <span>{{ raids[id]['name'][lang] }}</span>
+                </var-option>
+              </template>
             </var-select>
           </div>
         </template>
@@ -56,6 +73,7 @@ export default {
     return {
       lang: 'zh-hans',
       selected: tiers.map((x) => [x, null]),
+      sw: 0,
       canvas: null,
     }
   },
@@ -247,15 +265,20 @@ body {
 
 .card {
   width: 300px;
-  --card-footer-bottom: 50px;
-  --card-footer-right: 9px;
+}
+
+.card-title {
+  color: var(--card-title-color);
+  font-size: var(--card-title-font-size);
+  padding: var(--card-title-padding);
+  margin: var(--card-title-margin);
 }
 
 .card-description {
   color: var(--card-description-color);
   font-size: var(--card-description-font-size);
   padding: var(--card-description-padding);
-  margin: var(--card-description-margin);
+  margin: 8px 0 0 0;
 }
 
 .append-icon {
