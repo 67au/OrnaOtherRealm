@@ -1,12 +1,12 @@
 <template>
   <div class="layout">
-    <AppHeader title="Other Realm" />
+    <AppHeader :title="$t('realm')" />
     <var-space justify="space-around">
       <var-card class="card">
         <template #title>
           <div class="card-title">
             <var-space justify="space-between">
-              {{ "Raids" }}
+              {{ $t('raids') }}
               <var-radio v-model="sw">
                 <template #unchecked-icon>
                   <var-icon name="lock" size="20px"/>
@@ -44,8 +44,8 @@
           </div>
         </template>
         <template #extra>
-          <var-button text type="primary" @click="previewImage"> {{ preview_button }} </var-button>
-          <var-button text type="primary" @click="downloadImage"> {{ generate_button }} </var-button>
+          <var-button text type="primary" @click="previewImage"> {{ $t('preview_button') }} </var-button>
+          <var-button text type="primary" @click="downloadImage"> {{ $t('generate_button') }} </var-button>
         </template>
       </var-card>
     </var-space>
@@ -55,6 +55,7 @@
 <script setup>
 import raids from './assets/json/raid-hp.json';
 import { fabric } from 'fabric';
+import { watch } from 'vue';
 import { ImagePreview } from '@varlet/ui';
 </script>
 
@@ -63,15 +64,17 @@ const star = '★';
 const static_url = 'https://playorna.com/static';
 const rewrite_url = 'https://pxy.fqegg.top/static';
 const tiers = Array.from(Array(7).keys(), (x) => (x + 4).toString());
-const preview_button = '预览';
-const generate_button = '生成';
-const realm = '重生界门';
 const sign = 'Generated from https://realm.fqegg.top'
 
 export default {
+  mounted() {
+    watch(() => this.$i18n.locale, (newVal, oldVal) => {
+      this.lang = newVal;
+    });
+  },
   data() {
     return {
-      lang: 'zh-hans',
+      lang: this.$i18n.locale,
       selected: tiers.map((x) => [x, null]),
       sw: 0,
       canvas: null,
@@ -180,7 +183,7 @@ export default {
         this.canvas.add(raidImg);
         this.canvas.renderAll();
       }
-      const title = new fabric.Text(realm, {
+      const title = new fabric.Text(this.$t('realm'), {
         originX: 'center',
         originY: 'center',
         left: WIDTH / 2,
