@@ -1,7 +1,7 @@
 <template>
   <div class="layout">
     <AppHeader :title="$t('realm')" />
-    <var-space justify="space-around">
+    <var-space justify="space-around" v-if="raids !== null">
       <var-card class="card">
         <template #title>
           <div class="card-title">
@@ -53,8 +53,8 @@
 </template>
 
 <script setup>
-import raids from './assets/json/raid-hp.json';
-import { fabric } from 'fabric';
+// import raids from './assets/json/raid-hp.json';
+// import { fabric } from 'fabric';
 import { watch } from 'vue';
 import { ImagePreview } from '@varlet/ui';
 </script>
@@ -64,13 +64,20 @@ const star = '★';
 const static_url = 'https://playorna.com/static';
 const rewrite_url = 'https://pxy.fqegg.top/static';
 const tiers = Array.from(Array(7).keys(), (x) => (x + 4).toString());
-const sign = 'Generated from https://realm.fqegg.top'
+const sign = 'Generated from https://realm.fqegg.top';
+let fabric = null;
 
 export default {
   mounted() {
     watch(() => this.$i18n.locale, (newVal, oldVal) => {
       this.lang = newVal;
     });
+    import('fabric').then((module) => {
+      fabric = module.fabric;
+    });
+    import('./assets/json/raid-hp.json').then((module) => {
+      this.raids = module.default;
+    })
   },
   data() {
     return {
@@ -78,6 +85,7 @@ export default {
       selected: tiers.map((x) => [x, null]),
       sw: 0,
       canvas: null,
+      raids: null,
     }
   },
   methods: {
@@ -144,14 +152,14 @@ export default {
           continue;
         }
 
-        const raidName = new fabric.Text(raids[id]['name'][this.lang], {
+        const raidName = new fabric.Text(this.raids[id]['name'][this.lang], {
           originX: 'left',
           originY: 'center',
           left: WIDTH * 0.245,
           fill: fontColor,
           fontSize: titleFontSize,
         })
-        const raidHP = new fabric.Text((raids[id]['hp'] * 10).toLocaleString(), {
+        const raidHP = new fabric.Text((this.raids[id]['hp'] * 10).toLocaleString(), {
           originX: 'right',
           originY: 'center',
           left: WIDTH * 0.95,
@@ -165,7 +173,7 @@ export default {
         });
         this.canvas.add(group);
 
-        const raidImg = await fabricImageFromURL(`${rewrite_url}${raids[id]['icon']}`)
+        const raidImg = await fabricImageFromURL(`${rewrite_url}${this.raids[id]['icon']}`)
         const scale = 2;
         raidImg.filters.push(new fabric.Image.filters.Resize({
           resizeType: 'sliceHack',
@@ -241,7 +249,7 @@ export default {
   },
   computed: {
     raidTier() {
-      return Object.entries(raids).map(([k, v]) => [k, v['tier']]);
+      return Object.entries(this.raids).map(([k, v]) => [k, v['tier']]);
     }
   }
 }
