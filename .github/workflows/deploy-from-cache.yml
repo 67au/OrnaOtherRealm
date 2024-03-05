@@ -1,13 +1,14 @@
 name: Deploy
 
 on:
-  # push:
-  #   branches:
-  #     - main
+  push:
+    branches:
+      - main
       
   workflow_dispatch:
     
 permissions:
+  actions: read
   contents: read
   pages: write
   id-token: write
@@ -30,6 +31,14 @@ jobs:
         with: 
           repository: '67au/OrnaCodexCrawler'
           path: './crawler'
+      - name: Download Codex from Artifact
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          name: codex-data
+          path: './crawler/tmp'
+          github_token: ${{ secrets.GH_PAT }}
+          workflow: upload-data.yml
+          repo: 67au/OrnaCodexCrawler
       - name: Setup Python environment
         uses: actions/setup-python@v5
         with:
@@ -40,7 +49,7 @@ jobs:
       - name: Crawl Raid Data
         run: |
           cd crawler
-          python cli.py raid -o ../src/assets/json/raid-hp.json
+          python cli.py raid -g -o ../src/assets/json/raid-hp.json
           cd ..
       - name: Setup Node.js environment
         uses: actions/setup-node@v3
