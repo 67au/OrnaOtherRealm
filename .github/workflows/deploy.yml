@@ -40,7 +40,7 @@ jobs:
       - name: Crawl Raid Data
         run: |
           cd crawler
-          python cli.py raid -o ../src/assets/json/raid-hp.json
+          python script.py raid -o ../src/assets/json/raid-hp.json
           cd ..
       - name: Setup Node.js environment
         uses: actions/setup-node@v3
