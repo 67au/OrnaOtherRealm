@@ -61,7 +61,7 @@ import { ImagePreview } from '@varlet/ui';
 
 <script>
 const star = '★';
-const static_url = 'https://playorna.com/static';
+const static_url = 'https://aethric.com/static';
 const rewrite_url = 'https://pxy.fqegg.top/static';
 const tiers = Array.from(Array(7).keys(), (x) => (x + 4).toString());
 const sign = 'Generated from https://realm.fqegg.top';
