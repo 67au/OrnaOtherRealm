@@ -8,7 +8,9 @@ import {
   mdiChevronDoubleUp,
   mdiClose,
   mdiDownloadBoxOutline,
+  mdiHeart,
   mdiRestore,
+  mdiStar,
 } from '@mdi/js'
 import { useRealmState } from '@/stores/realm'
 import { toPng } from 'html-to-image'
@@ -203,16 +205,16 @@ function donwloadImage() {
               </v-list-item-title>
               <v-list-item-subtitle class="pt-1 d-flex ga-1">
                 <v-chip
-                  size="small"
                   color="warning"
-                  rounded="sm"
-                  :text="`★${realm[id]['tier']}`"
+                  rounded="lg"
+                  :prepend-icon="mdiStar"
+                  :text="realm[id]['tier']"
                 ></v-chip>
                 <v-chip
-                  size="small"
                   color="error"
-                  rounded="sm"
-                  :text="`❤ ${(realm[id]['hp'] * 10).toLocaleString()}`"
+                  rounded="lg"
+                  :prepend-icon="mdiHeart"
+                  :text="(realm[id]['hp'] * 10).toLocaleString()"
                 ></v-chip>
               </v-list-item-subtitle>
               <template v-slot:prepend>
@@ -283,13 +285,15 @@ function donwloadImage() {
                 color="warning"
                 variant="text"
                 rounded="sm"
-                :text="`★${realm[id]['tier']}`"
+                :prepend-icon="mdiStar"
+                :text="realm[id]['tier']"
               ></v-chip>
               <v-chip
                 variant="text"
                 color="error"
                 rounded="sm"
-                :text="`❤ ${(realm[id]['hp'] * 10).toLocaleString()}`"
+                :prepend-icon="mdiHeart"
+                :text="(realm[id]['hp'] * 10).toLocaleString()"
               ></v-chip>
             </div>
           </template>
